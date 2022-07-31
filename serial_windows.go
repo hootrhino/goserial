@@ -2,6 +2,7 @@ package serial
 
 import (
 	"fmt"
+	"strings"
 	"syscall"
 )
 
@@ -86,7 +87,7 @@ func (p *port) setTimeouts(c *Config) error {
 	var timeouts c_COMMTIMEOUTS
 	// Read and write timeout
 	if c.Timeout > 0 {
-		timeout := toDWORD(int(c.Timeout.Nanoseconds() / 1E6))
+		timeout := toDWORD(int(c.Timeout.Nanoseconds() / 1e6))
 		// wait until a byte arrived or time out
 		timeouts.ReadIntervalTimeout = c_MAXDWORD
 		timeouts.ReadTotalTimeoutMultiplier = c_MAXDWORD
@@ -156,13 +157,23 @@ func (p *port) setSerialConfig(c *Config) error {
 }
 
 func newHandle(c *Config) (handle syscall.Handle, err error) {
+	// add a "\\.\" prefix, e.g. "\\.\COM2"
+	// optional for COM1-9, required for COM10 and up
+	//
+	if !strings.HasPrefix(c.Address, `\\.\`) {
+		c.Address = `\\.\` + c.Address
+	}
+	ptr, err := syscall.UTF16PtrFromString(c.Address)
+	if err != nil {
+		return handle, err
+	}
 	handle, err = syscall.CreateFile(
-		syscall.StringToUTF16Ptr(c.Address),
+		ptr,
 		syscall.GENERIC_READ|syscall.GENERIC_WRITE,
-		0,   // mode
-		nil, // security
+		0,                     // mode
+		nil,                   // security
 		syscall.OPEN_EXISTING, // create mode
-		0, // attributes
-		0) // templates
+		0,                     // attributes
+		0)                     // templates
 	return
 }
