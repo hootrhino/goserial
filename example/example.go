@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/wwhai/goserial"
+	"github.com/hootrhino/goserial"
 )
 
 var (
