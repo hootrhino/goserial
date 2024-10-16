@@ -54,6 +54,8 @@ type Port interface {
 	io.ReadWriteCloser
 	// Connect connects to the serial port.
 	Open(*Config) error
+	SetReadDeadline(t time.Time) error
+	SetWriteDeadline(t time.Time) error
 }
 
 // Open opens a serial port.

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"syscall"
+	"time"
 )
 
 type port struct {
@@ -176,4 +177,12 @@ func newHandle(c *Config) (handle syscall.Handle, err error) {
 		0,                     // attributes
 		0)                     // templates
 	return
+}
+
+func (p *port) SetReadDeadline(t time.Time) error {
+	return nil
+}
+
+func (p *port) SetWriteDeadline(t time.Time) error {
+	return nil
 }

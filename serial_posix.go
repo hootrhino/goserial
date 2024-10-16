@@ -1,3 +1,4 @@
+//go:build darwin || linux || freebsd || openbsd || netbsd
 // +build darwin linux freebsd openbsd netbsd
 
 package serial
@@ -261,5 +262,13 @@ func enableRS485(fd int, config *RS485Config) error {
 	if r != 0 {
 		return errors.New("serial: unknown error from SYS_IOCTL (RS485)")
 	}
+	return nil
+}
+
+func (p *port) SetReadDeadline(t time.Time) error {
+	return nil
+}
+
+func (p *port) SetWriteDeadline(t time.Time) error {
 	return nil
 }
